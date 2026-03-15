@@ -8,7 +8,8 @@ from typing import AsyncGenerator
 from elasticsearch import AsyncElasticsearch
 
 from app.config import settings
-from app.services.embedding import EmbeddingProvider, OpenAIEmbeddingProvider
+from app.services.embedding import EmbeddingProvider
+from app.services.embedding import get_embedding_provider as _create_embedding_provider
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,8 @@ def get_embedding_provider() -> EmbeddingProvider:
     """Return (or lazily create) a singleton embedding provider."""
     global _embedding_provider
     if _embedding_provider is None:
-        _embedding_provider = OpenAIEmbeddingProvider()
-        logger.info("OpenAI embedding provider initialised")
+        _embedding_provider = _create_embedding_provider()
+        logger.info("Embedding provider initialised (%s)", settings.EMBEDDING_PROVIDER)
     return _embedding_provider
 
 

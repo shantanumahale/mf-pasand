@@ -34,7 +34,7 @@ class RecommendationProvider extends ChangeNotifier {
       _error = e.message;
       _recommendations = [];
     } catch (e) {
-      _error = 'Something went wrong. Please try again.';
+      _error = 'Something went wrong: $e';
       _recommendations = [];
     } finally {
       _isLoading = false;

@@ -1,7 +1,9 @@
 """Embedding generation with a swappable provider abstraction."""
 
+import asyncio
 import logging
 from abc import ABC, abstractmethod
+from functools import partial
 
 import openai
 
@@ -68,6 +70,53 @@ class OpenAIEmbeddingProvider(EmbeddingProvider):
         return all_embeddings
 
 
+class LocalEmbeddingProvider(EmbeddingProvider):
+    """Local sentence-transformers embedding provider (no API key needed)."""
+
+    def __init__(self, model: str | None = None) -> None:
+        from sentence_transformers import SentenceTransformer
+
+        self._model_name = model or settings.EMBEDDING_MODEL
+        logger.info("Loading local embedding model '%s'...", self._model_name)
+        self._model = SentenceTransformer(self._model_name)
+        logger.info("Local embedding model loaded")
+
+    def _encode(self, texts: list[str]) -> list[list[float]]:
+        embeddings = self._model.encode(texts, show_progress_bar=True, normalize_embeddings=True)
+        return embeddings.tolist()
+
+    async def embed_text(self, text: str) -> list[float]:
+        loop = asyncio.get_running_loop()
+        result = await loop.run_in_executor(None, partial(self._encode, [text]))
+        return result[0]
+
+    async def embed_batch(
+        self,
+        texts: list[str],
+        batch_size: int = 256,
+    ) -> list[list[float]]:
+        """Embed texts in batches using the local model."""
+        all_embeddings: list[list[float]] = []
+
+        for start in range(0, len(texts), batch_size):
+            chunk = texts[start : start + batch_size]
+            logger.info(
+                "Embedding batch %d-%d of %d",
+                start,
+                start + len(chunk),
+                len(texts),
+            )
+            loop = asyncio.get_running_loop()
+            batch_embs = await loop.run_in_executor(
+                None, partial(self._encode, chunk)
+            )
+            all_embeddings.extend(batch_embs)
+
+        return all_embeddings
+
+
 def get_embedding_provider() -> EmbeddingProvider:
     """Factory that returns the configured embedding provider."""
-    return OpenAIEmbeddingProvider()
+    if settings.EMBEDDING_PROVIDER == "openai":
+        return OpenAIEmbeddingProvider()
+    return LocalEmbeddingProvider()

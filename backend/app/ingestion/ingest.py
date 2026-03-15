@@ -21,7 +21,7 @@ from app.ingestion.sources.amfi import (
     filter_schemes,
 )
 from app.ingestion.sources.kuvera import fetch_all_kuvera_metadata
-from app.services.embedding import OpenAIEmbeddingProvider
+from app.services.embedding import get_embedding_provider
 from app.services.fund_text import fund_to_natural_text
 
 logging.basicConfig(
@@ -71,9 +71,11 @@ INDEX_MAPPING = {
 async def create_or_recreate_index(es: AsyncElasticsearch) -> None:
     """Create the ES index, deleting it first if it already exists."""
     index = settings.ES_INDEX
-    if await es.indices.exists(index=index):
-        logger.warning("Deleting existing index '%s'", index)
+    try:
         await es.indices.delete(index=index)
+        logger.warning("Deleted existing index '%s'", index)
+    except Exception:
+        pass  # Index didn't exist or already gone
 
     await es.indices.create(index=index, body=INDEX_MAPPING)
     logger.info("Created index '%s'", index)
@@ -164,7 +166,7 @@ async def run_ingestion() -> None:
 
     # Step 7: Generate embeddings (batched)
     logger.info("Generating embeddings for %d funds...", len(merged_funds))
-    embedder = OpenAIEmbeddingProvider()
+    embedder = get_embedding_provider()
     texts = [fund["natural_text"] for fund in merged_funds]
     embeddings = await embedder.embed_batch(texts)
 

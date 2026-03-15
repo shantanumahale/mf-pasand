@@ -9,8 +9,9 @@ class Settings(BaseSettings):
     ES_HOST: str = "localhost:9200"
     ES_INDEX: str = "mf-recommendations"
     OPENAI_API_KEY: str = ""
-    EMBEDDING_MODEL: str = "text-embedding-3-small"
-    EMBEDDING_DIMS: int = 1536
+    EMBEDDING_PROVIDER: str = "local"  # "local" or "openai"
+    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
+    EMBEDDING_DIMS: int = 384
 
     model_config = {
         "env_file": ".env",

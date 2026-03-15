@@ -21,7 +21,7 @@ class ApiService {
   static String get baseUrl {
     if (kIsWeb) return 'http://localhost:8000';
     try {
-      if (Platform.isAndroid) return 'http://10.0.2.2:8000';
+      if (Platform.isAndroid) return 'http://192.168.1.7:8000';
     } catch (_) {}
     return 'http://localhost:8000';
   }
