@@ -102,9 +102,12 @@ class _PersonaScreenState extends State<PersonaScreen> {
       ),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+        child: Column(
           children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                children: [
             // Age
             _SectionLabel(label: 'Age'),
             const SizedBox(height: 8),
@@ -271,15 +274,29 @@ class _PersonaScreenState extends State<PersonaScreen> {
               ),
             ),
 
-            const SizedBox(height: 32),
-
-            // Submit button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: _submit,
-                child: const Text('Get Recommendations'),
+                ],
+              ),
+            ),
+            // Sticky bottom CTA
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 12, 20, MediaQuery.of(context).padding.bottom + 16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  child: const Text('Get Recommendations'),
+                ),
               ),
             ),
           ],
