@@ -18,7 +18,7 @@ _EXCLUDE_PATTERNS = re.compile(
 )
 _DIRECT_GROWTH_PATTERN = re.compile(r"Direct.*Growth|Direct\s+Plan.*Growth", re.IGNORECASE)
 
-AMFI_NAV_URL = "https://www.amfiindia.com/spages/NAVAll.txt"
+AMFI_NAV_URL = "https://portal.amfiindia.com/spages/NAVAll.txt"
 MFAPI_BASE = "https://api.mfapi.in/mf"
 
 # Concurrency controls
@@ -43,7 +43,8 @@ async def fetch_amfi_master(client: httpx.AsyncClient) -> dict[str, str]:
             continue
         scheme_code = parts[0].strip()
         isin = parts[1].strip()
-        if scheme_code.isdigit() and isin:
+        # Valid ISINs start with "INF" and are 12 chars; skip dashes and blanks
+        if scheme_code.isdigit() and isin.startswith("INF") and len(isin) == 12:
             mapping[scheme_code] = isin
 
     logger.info("AMFI master: %d scheme_code -> ISIN entries", len(mapping))
@@ -114,7 +115,7 @@ async def fetch_all_nav_histories(
     semaphore = asyncio.Semaphore(max_concurrency)
     results: dict[str, dict] = {}
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         tasks = []
         for code in scheme_codes:
             tasks.append(_fetch_and_store(client, str(code), semaphore, results))

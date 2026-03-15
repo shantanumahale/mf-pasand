@@ -10,7 +10,7 @@ test:
 
 # Run the full data ingestion pipeline
 ingest:
-	python -m app.ingestion.ingest
+	python3 -m app.ingestion.ingest
 
 # Start all services via Docker Compose
 up:

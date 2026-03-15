@@ -102,9 +102,10 @@ def _compute_volatility_and_drawdown(
     for _, nav in recent:
         if nav > peak:
             peak = nav
-        drawdown = (peak - nav) / peak * 100.0
-        if drawdown > max_dd:
-            max_dd = drawdown
+        if peak > 0:
+            drawdown = (peak - nav) / peak * 100.0
+            if drawdown > max_dd:
+                max_dd = drawdown
 
     return {
         "volatility_1y": round(annualised_vol, 2),

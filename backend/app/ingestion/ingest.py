@@ -122,11 +122,11 @@ async def run_ingestion() -> None:
     logger.info("=== Starting MF Pasand ingestion ===")
 
     # Step 1: Fetch AMFI master (scheme_code -> ISIN mapping)
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         amfi_isin_map = await fetch_amfi_master(client)
 
     # Step 2: Fetch all scheme codes and filter to direct/growth
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         all_schemes = await fetch_all_scheme_codes(client)
     direct_growth = filter_schemes(all_schemes)
     scheme_codes = [str(s["schemeCode"]) for s in direct_growth]

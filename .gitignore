@@ -1,0 +1,29 @@
+# Environment files (contain secrets)
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.venv/
+venv/
+
+# Elasticsearch data
+es_data/
+
+# Flutter
+frontend/mf_pasand_app/build/
+frontend/mf_pasand_app/.dart_tool/
+frontend/mf_pasand_app/.flutter-plugins
+frontend/mf_pasand_app/.flutter-plugins-dependencies
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store

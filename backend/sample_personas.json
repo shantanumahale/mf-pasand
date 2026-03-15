@@ -1,0 +1,107 @@
+[
+  {
+    "_description": "Young aggressive investor — wealth creation via SIP",
+    "age": 25,
+    "annual_income": 8,
+    "investment_horizon": "long",
+    "risk_appetite": "very_high",
+    "investment_goal": "wealth_creation",
+    "monthly_sip_budget": 5000,
+    "preferences": "I like small cap and mid cap funds"
+  },
+  {
+    "_description": "Salaried professional — tax saving with ELSS",
+    "age": 32,
+    "annual_income": 18,
+    "investment_horizon": "long",
+    "risk_appetite": "moderate",
+    "investment_goal": "tax_saving",
+    "monthly_sip_budget": 12500,
+    "existing_investments": "PPF and EPF contributions, no mutual funds yet"
+  },
+  {
+    "_description": "Conservative retiree — regular income, low risk",
+    "age": 62,
+    "annual_income": 6,
+    "investment_horizon": "short",
+    "risk_appetite": "low",
+    "investment_goal": "regular_income",
+    "lumpsum_available": 2000000,
+    "existing_investments": "FDs worth 50 lakhs, Senior Citizen Savings Scheme",
+    "preferences": "Only debt funds, no equity exposure at all"
+  },
+  {
+    "_description": "New parent — child education fund",
+    "age": 30,
+    "annual_income": 25,
+    "investment_horizon": "long",
+    "risk_appetite": "high",
+    "investment_goal": "child_education",
+    "monthly_sip_budget": 15000,
+    "lumpsum_available": 100000,
+    "existing_investments": "Some index funds and a PPF account"
+  },
+  {
+    "_description": "Emergency fund builder — needs liquid, safe options",
+    "age": 27,
+    "annual_income": 10,
+    "investment_horizon": "short",
+    "risk_appetite": "low",
+    "investment_goal": "emergency_fund",
+    "lumpsum_available": 300000,
+    "preferences": "Liquid or overnight funds only, need instant redemption"
+  },
+  {
+    "_description": "Mid-career balanced investor — moderate everything",
+    "age": 40,
+    "annual_income": 30,
+    "investment_horizon": "medium",
+    "risk_appetite": "moderate",
+    "investment_goal": "wealth_creation",
+    "monthly_sip_budget": 25000,
+    "existing_investments": "SBI Bluechip, HDFC Mid Cap, some FDs",
+    "preferences": "Balanced or hybrid funds, nothing too volatile"
+  },
+  {
+    "_description": "Index fund enthusiast — passive investing",
+    "age": 28,
+    "annual_income": 15,
+    "investment_horizon": "long",
+    "risk_appetite": "high",
+    "investment_goal": "wealth_creation",
+    "monthly_sip_budget": 20000,
+    "preferences": "Only index funds and ETFs, no actively managed funds, low expense ratio is a must"
+  },
+  {
+    "_description": "High net worth — large lumpsum, diversified",
+    "age": 45,
+    "annual_income": 75,
+    "investment_horizon": "long",
+    "risk_appetite": "high",
+    "investment_goal": "wealth_creation",
+    "monthly_sip_budget": 100000,
+    "lumpsum_available": 5000000,
+    "existing_investments": "Real estate, direct stocks, PMS worth 2 crores",
+    "preferences": "Flexi cap or multi cap, open to international funds"
+  },
+  {
+    "_description": "Retirement planner — 15 years to go",
+    "age": 45,
+    "annual_income": 20,
+    "investment_horizon": "long",
+    "risk_appetite": "moderate",
+    "investment_goal": "retirement",
+    "monthly_sip_budget": 30000,
+    "existing_investments": "EPF, NPS Tier 1, some LIC policies",
+    "preferences": "Large cap or balanced advantage funds"
+  },
+  {
+    "_description": "College student — tiny budget, first-time investor",
+    "age": 21,
+    "investment_horizon": "long",
+    "risk_appetite": "very_high",
+    "investment_goal": "wealth_creation",
+    "monthly_sip_budget": 500,
+    "preferences": "Cheapest SIP possible, I want to start small and learn"
+  }
+]

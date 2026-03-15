@@ -9,26 +9,10 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-KUVERA_BASE = "https://mf.captnemo.in"
+KUVERA_BASE = "https://mf.captnemo.in/kuvera"
 
 _SEMAPHORE_LIMIT = 5
 _REQUEST_DELAY = 0.2  # be gentle with the free API
-
-# Fields to extract from the Kuvera response
-_FIELDS = [
-    "aum",
-    "category",
-    "crisil_rating",
-    "expense_ratio",
-    "fund_category",
-    "fund_house",
-    "fund_manager",
-    "fund_type",
-    "fund_rating",
-    "min_sip",
-    "min_lumpsum",
-    "maturity_type",
-]
 
 
 async def fetch_kuvera_metadata(
@@ -40,7 +24,7 @@ async def fetch_kuvera_metadata(
 
     Returns a dict of extracted fields, or None on failure / 404.
     """
-    url = f"{KUVERA_BASE}/{isin}.json"
+    url = f"{KUVERA_BASE}/{isin}"
     async with semaphore:
         await asyncio.sleep(_REQUEST_DELAY)
         try:
@@ -49,19 +33,64 @@ async def fetch_kuvera_metadata(
                 logger.debug("Kuvera 404 for ISIN %s", isin)
                 return None
             resp.raise_for_status()
-            data = resp.json()
+            raw = resp.json()
+
+            # API returns a JSON array — take the first entry
+            if isinstance(raw, list):
+                if not raw:
+                    return None
+                data = raw[0]
+            else:
+                data = raw
 
             extracted: dict = {}
-            for field in _FIELDS:
-                val = data.get(field)
-                if val is not None:
-                    extracted[field] = val
 
-            # Normalise AUM to crores if present
-            aum = extracted.get("aum")
+            # Map Kuvera fields to our schema
+            if data.get("category"):
+                extracted["category"] = data["category"]
+            if data.get("fund_category"):
+                extracted["fund_category"] = data["fund_category"]
+            if data.get("fund_type"):
+                extracted["fund_type"] = data["fund_type"]
+            if data.get("fund_name"):
+                extracted["fund_house"] = data["fund_name"]
+            if data.get("fund_manager"):
+                extracted["fund_manager"] = data["fund_manager"]
+            if data.get("crisil_rating"):
+                extracted["crisil_rating"] = data["crisil_rating"]
+            if data.get("maturity_type"):
+                extracted["maturity_type"] = data["maturity_type"]
+            if data.get("fund_rating") is not None:
+                extracted["fund_rating"] = data["fund_rating"]
+
+            # Expense ratio comes as a string
+            er = data.get("expense_ratio")
+            if er is not None:
+                try:
+                    extracted["expense_ratio"] = float(er)
+                except (TypeError, ValueError):
+                    pass
+
+            # AUM in lakhs from API — convert to crores
+            aum = data.get("aum")
             if aum is not None:
                 try:
-                    extracted["aum_cr"] = float(aum)
+                    extracted["aum_cr"] = round(float(aum) / 100, 2)
+                except (TypeError, ValueError):
+                    pass
+
+            # SIP and lumpsum minimums
+            sip_min = data.get("sip_min")
+            if sip_min is not None:
+                try:
+                    extracted["min_sip"] = float(sip_min)
+                except (TypeError, ValueError):
+                    pass
+
+            lump_min = data.get("lump_min")
+            if lump_min is not None:
+                try:
+                    extracted["min_lumpsum"] = float(lump_min)
                 except (TypeError, ValueError):
                     pass
 
@@ -90,7 +119,7 @@ async def fetch_all_kuvera_metadata(
     semaphore = asyncio.Semaphore(max_concurrency)
     results: dict[str, dict] = {}
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         tasks = []
         for scheme_code, isin in isin_map.items():
             tasks.append(
